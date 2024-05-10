@@ -13,7 +13,7 @@ import encrypt
 load_dotenv()
 
 logging.basicConfig(
-    filename="logs/router-reboot.log",
+    filename=(Path(__file__).parent / "logs" / "router-reboot.log").resolve(),
     format="%(asctime)s %(levelname)s %(message)s",
     level=logging.INFO,
 )
@@ -48,21 +48,21 @@ def login(session: Session):
 
 
 def reboot(session: Session):
-    logging.info('Rebooting with POST /php/user_data.php')
+    logging.info("Rebooting with POST /php/user_data.php")
     response = session.post(
         BASE_URL + "/php/user_data.php",
         data={"userData": json.dumps({"reboot": "restart"}), "opType": "WRITE"},
     )
     if "success" not in response.text:
-        logging.error('Reboot not successful, got %s', response.text)
+        logging.error("Reboot not successful, got %s", response.text)
         raise Exception("Could not reboot router: " + response.text)
 
-    logging.info('Reboot scheduled')
+    logging.info("Reboot scheduled")
 
 
 # Probably not necessary but the web interface does it, too
 def logout(session: Session):
-    logging.info('Logging out')
+    logging.info("Logging out")
     session.get(BASE_URL + "/php/logout.php")
 
 
