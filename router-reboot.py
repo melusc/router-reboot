@@ -76,5 +76,5 @@ with Session() as session:
     }
 
     login(session)
-    # reboot(session)
-    # logout(session)
+    reboot(session)
+    logout(session)
