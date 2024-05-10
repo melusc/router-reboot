@@ -19,7 +19,9 @@ logging.basicConfig(
 )
 
 BASE_URL = os.getenv("ROUTER_BASE_URL")
+assert type(BASE_URL) is str
 PASSWORD = os.getenv("ROUTER_PASSWORD")
+assert type(PASSWORD) is str
 
 logging.info("ROUTER_BASE_URL=%s", BASE_URL)
 logging.info("ROUTER_PASSWORD=%s", PASSWORD[0] + "*" * (len(PASSWORD) - 1))
