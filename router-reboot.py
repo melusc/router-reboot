@@ -6,14 +6,15 @@ from pathlib import Path
 from dotenv import load_dotenv
 from requests.sessions import Session
 
-(Path(__file__).parent / "logs").mkdir(exist_ok=True)
-
 import encrypt
 
 load_dotenv()
 
+LOGS_DIR = Path(__file__).parent / "logs"
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
 logging.basicConfig(
-    filename=(Path(__file__).parent / "logs" / "router-reboot.log").resolve(),
+    filename=LOGS_DIR / "router-reboot.log",
     format="%(asctime)s %(levelname)s %(message)s",
     level=logging.INFO,
 )
