@@ -33,5 +33,5 @@ If you want to run this every day, you can use cron jobs.
 Using `crontab -e`, add the following line:
 
 ```plain
-0 3 * * * python3 /path/to/router-reboot.py # Runs every day at 3 am
+0 3 * * * /path/to/router-reboot/bin/python3 /path/to/router-reboot/router-reboot.py # Runs every day at 3 am
 ```
