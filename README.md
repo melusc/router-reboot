@@ -14,7 +14,7 @@ Software version	: AR01.04.055.06.07_040722_7245.SIP.10.LG.X1
 
 ```bash
 python3 -m venv .
-pip3 install -r requirements.txt
+./bin/pip3 install -r requirements.txt
 cp .env.template .env
 ```
 
