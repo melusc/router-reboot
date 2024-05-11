@@ -6,7 +6,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from requests.sessions import Session
 
-Path("logs").mkdir(parents=True, exist_ok=True)
+(Path(__file__).parent / "logs").mkdir(exist_ok=True)
 
 import encrypt
 
