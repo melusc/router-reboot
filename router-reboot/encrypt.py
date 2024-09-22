@@ -36,7 +36,7 @@ def encrypt(
     plainText = plainText.encode("ascii")
 
     cipher = AES.new(derivedKey, AES.MODE_CCM, initVector)
-    cipher.update(bytes("encryptData".encode("utf8")))
+    cipher.update("encryptData".encode("utf8"))
     encrypted_data = cipher.encrypt(plainText)
     encrypted_data += cipher.digest()
 

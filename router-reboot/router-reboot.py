@@ -10,7 +10,7 @@ import encrypt
 
 load_dotenv()
 
-LOGS_DIR = Path(__file__).parent / "logs"
+LOGS_DIR = Path(__file__).parent.parent / "logs"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 logging.basicConfig(
@@ -19,25 +19,17 @@ logging.basicConfig(
     level=logging.INFO,
 )
 
-BASE_URL = os.getenv("ROUTER_BASE_URL")
-assert type(BASE_URL) is str
-PASSWORD = os.getenv("ROUTER_PASSWORD")
-assert type(PASSWORD) is str
 
-logging.info("ROUTER_BASE_URL=%s", BASE_URL)
-logging.info("ROUTER_PASSWORD=%s", PASSWORD[0] + "*" * (len(PASSWORD) - 1))
-
-
-def login(session: Session):
+def login(session: Session, base_url: str):
     loginBody = encrypt.encryptData(
         {
-            "oldPassword": PASSWORD,
+            "oldPassword": password,
             "ChangePassword": False,
         }
     )
     logging.info("Logging in with POST /php/ajaxSet_Password.php")
     response = session.post(
-        BASE_URL + "/php/ajaxSet_Password.php",
+        base_url + "/php/ajaxSet_Password.php",
         data={"configInfo": json.dumps(loginBody)},
     )
     response_json = response.json()
@@ -50,10 +42,10 @@ def login(session: Session):
     session.headers["CSRF_NONCE"] = response_json["nonce"]
 
 
-def reboot(session: Session):
+def reboot(session: Session, base_url: str):
     logging.info("Rebooting with POST /php/user_data.php")
     response = session.post(
-        BASE_URL + "/php/user_data.php",
+        base_url + "/php/user_data.php",
         data={"userData": json.dumps({"reboot": "restart"}), "opType": "WRITE"},
     )
     if "success" not in response.text:
@@ -64,20 +56,29 @@ def reboot(session: Session):
 
 
 # Probably not necessary but the web interface does it, too
-def logout(session: Session):
+def logout(session: Session, base_url: str):
     logging.info("Logging out")
-    session.get(BASE_URL + "/php/logout.php")
+    session.get(base_url + "/php/logout.php")
 
 
-with Session() as session:
-    session.headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0",
-        "Accept": "application/json",
-        "Referer": BASE_URL,
-        "Origin": BASE_URL,
-        "CSRF_NONCE": "undefined",
-    }
+if __name__ == "__main__":
+    base_url = os.getenv("ROUTER_BASE_URL")
+    assert type(base_url) is str
+    password = os.getenv("ROUTER_PASSWORD")
+    assert type(password) is str
 
-    login(session)
-    reboot(session)
-    logout(session)
+    logging.info("ROUTER_BASE_URL=%s", base_url)
+    logging.info("ROUTER_PASSWORD=%s", password[0] + "*" * (len(password) - 1))
+
+    with Session() as session:
+        session.headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0",
+            "Accept": "application/json",
+            "Referer": base_url,
+            "Origin": base_url,
+            "CSRF_NONCE": "undefined",
+        }
+
+        login(session, base_url)
+        reboot(session, base_url)
+        logout(session, base_url)
